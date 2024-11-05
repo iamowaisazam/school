@@ -8,6 +8,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PerformanceController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -86,7 +87,9 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/students/handle-selected',[RegistrationController::class,'handleSelectedStudents']);
         Route::get('class-list',[RegistrationController::class,'classList']);
         Route::delete('students/delete-registration/{id}',[RegistrationController::class, 'deleteRegistration']);
-    
+
+        Route::resource('performances', PerformanceController::class);
+
 
 
 

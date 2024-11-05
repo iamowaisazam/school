@@ -128,6 +128,22 @@
                         </li>
 
                         <li class="nav-item">
+                            <a href="{{URL::to('performances/create')}}" class="nav-link 
+                            {{ request()->is('performances/create') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Create Performance</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{URL::to('performances')}}" class="nav-link 
+                            {{ request()->is('performances') || request()->is('performances/*/edit') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Performances</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
                             <a href="{{ URL::to('/logout') }}" class="nav-link">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
                                 <p>Logout</p>

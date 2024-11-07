@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Student;
 use App\Imports\StudentsImport;
+use App\Models\Performance;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -92,19 +93,16 @@ class PerformanceController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
         $validator = Validator::make($request->all(), [
-            'sid' => 'required|string|max:255',
-            'campus' => 'required|string|max:100',
-            'class' => 'required|string|max:100',
-            'father_name' => 'nullable|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'student_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string',
-            'dob' => 'nullable|string',
-            'address' => 'nullable|string|max:100',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'is_registered' => 'required',
+            "student" => 'required|max:255',
+            "from_date" => 'required|max:255',
+            "end_date" => 'required|max:255',
+            "class" => 'required|max:255',
+            "week_number" => 'required|max:255',
+            "social_behavior" => 'required',
+            "personal_habits" => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -113,13 +111,17 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public_disk');
-            $validatedData['image'] = '/storage/' . $imagePath;
-        }
-
-        $validatedData['is_registered'] = $request->input('is_registered') == '1' ? 0 : 1;
-        $student = Student::create($validatedData);
+   
+        
+        $student = Performance::create([
+            'student_id' => $request->student,
+            'from' => $request->from_date,
+            'to' => $request->end_date,
+            'class' => $request->class,
+            'week' => $request->week_number,
+            'social_behavior' => json_encode($request->social_behavior),
+            'personal_habits' => json_encode($request->personal_habits),
+        ]);
 
         return back()->with('success','Record Created');
     }

@@ -1,6 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
+
+<style>
+      @media (max-width: 767px){
+        .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {       
+            overflow: scroll!important;
+        }
+    }
+
+    .dataTables_length{
+        display: contents;
+    }
+
+    .dataTables_length label{
+        display: contents;
+        margin-bottom: 0px!important;
+    }
+
+    .dataTables_info {
+     float: right!important;
+     padding-bottom: 23px!important;
+    }
+</style>
+
     <section class="content-header">
         <div class="container-fluid">
 
@@ -30,30 +53,39 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label>Students</label>
-                                    <select name="student" class="form-control">
-                                        @foreach ($students as $item)
-                                        <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="form-group">
+                                        <select name="student" class="form-control">
+                                            <option value="">Select Student</option>
+                                            @foreach ($students as $item)
+                                            <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label>Week Number</label>
-                                    <input name="week_number" class="form-control"  />
+                                    <div class="form-group">
+                                        <input name="week_number" class="form-control"  />
+                                    </div>
                                 </div>
                          
                                 <div class="col-md-4">
                                     <label>Start Date</label>
-                                    <input type="date" name="start_date" class="form-control"  />
+                                    <div class="form-group">
+                                        <input type="date" name="start_date" class="form-control"  />
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4">
                                     <label>End Date</label>
-                                    <input type="date" name="end_date" class="form-control"  />
+                                    <div class="form-group">
+                                        <input type="date" name="end_date" class="form-control"  />
+                                    </div>
                                 </div>
 
                                 <div class="col-12 mt-3 text-center">
-                                    <button class="btn btn-primary" >Search</button>
+                                    <button class="search_btn btn btn-primary" >Search</button>
                                 </div>
                             </div>
                           
@@ -76,9 +108,11 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>Date</th>
                                         <th>SID</th>
                                         <th>Student Name</th>
+                                        <th>From</th>
+                                        <th>To</th>
+                                        <th>Class</th>
                                         <th>Week Number</th>
                                         <th>Action</th>
                                     </tr>
@@ -102,8 +136,48 @@
             var dataTable = $('#table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ URL::to('performances') }}",
+                searching: true, 
+                dom: 'lirtp',
+                lengthMenu: [[10,25, 50, 100,500],[10,25, 50, 100,500]],
+                ajax: {
+                    url: "{{URL::to('performances')}}",
+                    type: "GET",
+                    data: function ( d ) {  
+
+                        d.student = $('select[name=student]').val();
+                        d.week_number = $('input[name=week_number]').val();
+                        d.start_date = $('input[name=start_date]').val();
+                        d.end_date = $('input[name=end_date]').val();
+
+                    }
+                },
             });
+            
+            $(".search_btn").click(e =>{ 
+                dataTable.draw();
+            });
+
+            $("#table").delegate(".delete_btn", "click", function(){
+            
+            var id = $(this).data('id'); 
+            $.ajax({
+                url:id,
+                method:"delete",
+                data:{
+                  '_token': "{{ csrf_token() }}",
+                },
+                success: function (response) {
+                    
+                    toastr.success('Student deleted successfully');
+                    dataTable.draw();
+                },
+                error:function (response) {
+                    
+              
+                },
+            });
+
+        });
 
             
             // $('#table').on('click', '.delete', function(event) {

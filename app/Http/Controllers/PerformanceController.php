@@ -21,51 +21,86 @@ class PerformanceController extends Controller
 
         if ($request->ajax()) {
 
-        //     $data = Student::latest()->get();
-        //     return DataTables::of($data)
-        //     ->addColumn('action', function ($row) {
+            $query = Performance::join('students','students.id','=','peformance_sheet.student_id');
 
-        //         $editUrl = URL::to('/students/'.$row->id.'/edit');
-        //         $deleteUrl = URL::to('/students/'.$row->id);
+     
 
-                $btn = '<a href="' . URL::to('/') . '" class="edit btn btn-primary btn-sm">';
-                $btn .= '<i class="fas fa-edit"></i>';
-                $btn .= '</a>';
+            if($request->has('student') && $request->student != ''){
+                $query->where('peformance_sheet.student_id',$request->student);
+            }
 
-                $btn .= ' <a href="' . URL::to('/') . '" data-id="' . 1 . '" class="delete btn btn-danger btn-sm">';
-                $btn .= '<i class="fas fa-trash-alt"></i>';
-                $btn .= '</a>';
+            if($request->has('week_number') && $request->week_number != ''){
+                $query->where('peformance_sheet.week',$request->week_number);
+            }
 
-                $btn .= ' <button class="view btn btn-info btn-sm" data-id="' . 1 . '" data-toggle="modal" data-target="#viewStudentModal">';
-                $btn .= '<i class="fas fa-eye"></i>';
-                $btn .= '</button>';
+            if($request->has('start_date') && $request->start_date != ''){
+                $query->where('peformance_sheet.from',$request->start_date);
+            }
 
-        //         return $btn;
-        //     })
-        //     ->rawColumns(['action'])
-        //     ->make(true);
+            if($request->has('end_date') && $request->end_date != ''){
+                $query->where('peformance_sheet.to',$request->end_date);
+            }
+
+
+
+            // $search = $request->get('search');
+            // if($search != ""){
+            //    $query = $query->where(function ($s) use($search) {
+                //    $s->where('week','like','%'.$search.'%');
+                //    ->orwhere('customer_email','like','%'.$search.'%')
+                //    ->orwhere('company_name','like','%'.$search.'%')
+                //    ->orwhere('customer_phone','like','%'.$search.'%');
+            //    });
+            // }
+            
+            $count = $query->count();       
+            $data = $query->skip($request->start)
+            ->take($request->length)
+            ->orderBy('id','desc')
+            ->select([
+                'peformance_sheet.*',
+                'students.sid',
+                'students.first_name',
+                'students.last_name',
+            ])
+            ->get();
+
+
+            $response = [];
+            foreach ($data as $key => $value) {
+                
+
+                $action = '<a href="' . URL::to('/performances/'.$value->id.'/edit').'" class="edit btn btn-primary btn-sm">';
+                $action .= '<i class="fas fa-edit"></i>';
+                $action .= '</a>';
+
+                $action .= ' <a data-id="'.URL::to('/performances/'.$value->id).'" class="delete_btn btn btn-danger btn-sm">';
+                $action .= '<i class="fas fa-trash-alt"></i>';
+                $action .= '</a>';
+
+
+                array_push($response,[
+                    $value->id,
+                    $value->sid,
+                    $value->first_name.' '.$value->last_name,
+                    date('Y-m-d',strtotime($value->from)),
+                    date('Y-m-d',strtotime($value->to)),
+                    $value->class,
+                    $value->week,
+                    $action,
+                ]);        
+            }
 
             return response()->json([
-                "draw" => 1,
-                "recordsTotal" => 10,
-                "recordsFiltered" => 1,
-                'data'=> [
-                    [
-                        'id',
-                        'date',
-                        'sid',
-                        'name',
-                        'week',
-                        $btn,
-                    ]
-                ],
+                "draw" => $request->draw,
+                "recordsTotal" => $count,
+                "recordsFiltered" => $count,
+                'data'=> $response,
             ]);
-
         }
 
         $data = [
             'students' => Student::all(),
-
         ];
 
         return view('pages.performances.index',$data);
@@ -92,8 +127,7 @@ class PerformanceController extends Controller
      */
     public function store(Request $request)
     {
-
-        // dd($request->all());
+        
 
         $validator = Validator::make($request->all(), [
             "student" => 'required|max:255',
@@ -111,8 +145,6 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
-   
-        
         $student = Performance::create([
             'student_id' => $request->student,
             'from' => $request->from_date,
@@ -132,14 +164,19 @@ class PerformanceController extends Controller
      */
     public function edit($id)
     {
-        $student = Student::findOrFail($id);
-        return view('pages.students.edit', compact('student'));
+        
+        $data = [
+            'students' => Student::all(),
+            'model' => Performance::findOrFail($id),
+        ];
+
+        return view('pages.performances.edit',$data);
     }
 
     public function show($id)
     {
-        $student = Student::findOrFail($id);
-        return response()->json($student);
+        // $student = Student::findOrFail($id);
+        // return response()->json($student);
     }
 
 
@@ -148,19 +185,17 @@ class PerformanceController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        // dd($request->all());
+
         $validator = Validator::make($request->all(), [
-            'sid' => 'required|string|max:255',
-            'campus' => 'required|string|max:100',
-            'class' => 'required|string|max:100',
-            'father_name' => 'nullable|string|max:255',
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'nullable|string|max:255',
-            'student_name' => 'nullable|string|max:255',
-            'phone' => 'nullable|string',
-            'dob' => 'nullable|string',
-            'address' => 'nullable|string|max:100',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'is_registered' => 'required',
+            "student" => 'required|max:255',
+            "from_date" => 'required|max:255',
+            "end_date" => 'required|max:255',
+            "class" => 'required|max:255',
+            "week_number" => 'required|max:255',
+            "social_behavior" => 'required',
+            "personal_habits" => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -169,22 +204,15 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
-        $student = Student::findOrFail($id);
-
-        $data = $request->all();
-
-        if ($request->hasFile('image')) {
-            if ($student->image) {
-                $oldImagePath = str_replace('/storage/', '', $student->image);
-                Storage::disk('public_disk')->delete($oldImagePath);
-            }
-            $imagePath = $request->file('image')->store('images', 'public_disk');
-            $data['image'] = '/storage/' . $imagePath;
-        }
-
-        $data['is_registered'] = $request->input('is_registered') == '1' ? 0 : 1;
-
-        $student->update($data);
+        $student = Performance::where('id',$id)->update([
+            'student_id' => $request->student,
+            'from' => $request->from_date,
+            'to' => $request->end_date,
+            'class' => $request->class,
+            'week' => $request->week_number,
+            'social_behavior' => json_encode($request->social_behavior),
+            'personal_habits' => json_encode($request->personal_habits),
+        ]);
 
         return back()->with('success','Record Updated');
 
@@ -198,7 +226,7 @@ class PerformanceController extends Controller
     public function destroy($id)
     {
         try {
-            $student = Student::findOrFail($id);
+            $student = Performance::findOrFail($id);
             $student->delete();
 
             return response()->json(['message' => 'Student deleted successfully'], 200);

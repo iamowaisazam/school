@@ -25,4 +25,16 @@ class Behavior
       ];
 
 
+    static public function  cc($i) {
+        return match ($i) {
+          'e' => 1,
+          'g' => 2,
+          'r' => 3,
+          'b' => 4,
+          'n' => 5,
+          default => 0,
+      };
+    }  
+
+
 }

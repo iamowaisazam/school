@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Behavior;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Student;
 use App\Imports\StudentsImport;
 use App\Models\Performance;
+use Illuminate\Support\Facades\Crypt;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -127,7 +129,6 @@ class PerformanceController extends Controller
      */
     public function store(Request $request)
     {
-        
 
         $validator = Validator::make($request->all(), [
             "student" => 'required|max:255',
@@ -135,8 +136,6 @@ class PerformanceController extends Controller
             "end_date" => 'required|max:255',
             "class" => 'required|max:255',
             "week_number" => 'required|max:255',
-            "social_behavior" => 'required',
-            "personal_habits" => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -145,17 +144,54 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
-        $student = Performance::create([
+
+        $social_behavior = [];
+        $personal_habits = [];
+
+        foreach (Behavior::DATA['social_behavior'] as $key => $value) {
+            $social_behavior[$key]['name'] = $value['name'];
+            $social_behavior[$key]['mon'] = 0;
+            $social_behavior[$key]['tue'] = 0;
+            $social_behavior[$key]['wed'] = 0;
+            $social_behavior[$key]['thu'] = 0;
+            $social_behavior[$key]['fri'] = 0;
+            $social_behavior[$key]['sat'] = 0;
+            $social_behavior[$key]['sun'] = 0;
+        }
+
+        foreach (Behavior::DATA['personal_habits'] as $key => $value) {
+            $personal_habits[$key]['name'] = $value['name'];
+            $personal_habits[$key]['mon'] = 1;
+            $personal_habits[$key]['tue'] = 2;
+            $personal_habits[$key]['wed'] = 3;
+            $personal_habits[$key]['thu'] = 4;
+            $personal_habits[$key]['fri'] = 5;
+            $personal_habits[$key]['sat'] = 5;
+            $personal_habits[$key]['sun'] = 6;
+        }
+
+        // dd($personal_habits);
+
+
+
+
+
+
+        $p = Performance::create([
             'student_id' => $request->student,
             'from' => $request->from_date,
             'to' => $request->end_date,
             'class' => $request->class,
             'week' => $request->week_number,
-            'social_behavior' => json_encode($request->social_behavior),
-            'personal_habits' => json_encode($request->personal_habits),
+            'social_behavior' => json_encode($social_behavior),
+            'personal_habits' => json_encode($personal_habits),
         ]);
 
-        return back()->with('success','Record Created');
+        return redirect('admin/performances/'.Crypt::encryptString($p->id).'/edit');
+
+
+
+        // return back()->with('success','Record Created');
     }
 
 
@@ -189,10 +225,8 @@ class PerformanceController extends Controller
         // dd($request->all());
 
         $validator = Validator::make($request->all(), [
-            "student" => 'required|max:255',
             "from_date" => 'required|max:255',
             "end_date" => 'required|max:255',
-            "class" => 'required|max:255',
             "week_number" => 'required|max:255',
             "social_behavior" => 'required',
             "personal_habits" => 'required',
@@ -205,10 +239,8 @@ class PerformanceController extends Controller
         }
 
         $student = Performance::where('id',$id)->update([
-            'student_id' => $request->student,
             'from' => $request->from_date,
             'to' => $request->end_date,
-            'class' => $request->class,
             'week' => $request->week_number,
             'social_behavior' => json_encode($request->social_behavior),
             'personal_habits' => json_encode($request->personal_habits),

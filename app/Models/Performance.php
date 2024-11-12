@@ -27,6 +27,12 @@ class Performance extends Model
         'updated_at',
     ];
 
+    public function student()
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
+
+
 
  
 

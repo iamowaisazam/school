@@ -27,10 +27,7 @@ class Setting extends Model
         'grouping',
     ];
 
-    public function image()
-    {
-        return $this->belongsTo(Filemanager::class, 'value');
-    }
+   
 
 
     

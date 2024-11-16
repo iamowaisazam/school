@@ -98,3 +98,91 @@
         </div>
     </section>
 @endsection
+
+@section('script')
+    
+
+<script>
+    
+    $(document).ready(function() {
+
+
+
+        function cc(i) {
+            
+            if(i){
+
+                i = String(i).toLowerCase(); 
+            
+                if (i === 'e') {
+                    return 5;
+                } else if (i === 'g') {
+                    return 4;
+                } else if (i === 'r') {
+                    return 3;
+                } else if (i === 'b') {
+                    return 2;
+                } else if (i === 'n') {
+                    return 1;
+                } else {
+                    return 0;
+                }
+
+            }else{
+                i = 0;
+            }
+
+            return 0;
+        }
+
+
+
+        function calculate(){
+
+            let mon = 0;
+            let tue = 0;
+            let wed = 0;
+            let thu = 0;
+            let fri = 0;
+            let sat = 0;
+            let sun = 0;
+
+             $('.tarbiya tr').each(function(index, element) { 
+
+                let el = $(this);
+
+                 mon += cc(el.find('.mon').val());
+                 tue += cc(el.find('.tue').val());
+                 wed += cc(el.find('.wed').val());
+                 thu += cc(el.find('.thu').val());
+                 fri += cc(el.find('.fri').val());
+                 sat += cc(el.find('.sat').val());
+                 sun += cc(el.find('.sun').val());
+                 
+            });
+
+
+            $('.mons').text(mon);
+            $('.tues').text(tue);
+            $('.weds').text(wed);
+            $('.thus').text(thu);
+            $('.fris').text(fri);
+            $('.sats').text(sat);
+            $('.suns').text(sun);
+
+            $('.total_label').text(mon + tue + wed + thu + fri + sat + sun);
+            $('input[name=total]').val(mon + tue + wed + thu + fri + sat + sun);
+        }
+
+
+        $('.tarbiya').change(function (e) { 
+            calculate();
+        });
+
+        calculate();
+
+    });
+</script>
+
+@endsection
+

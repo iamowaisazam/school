@@ -31,6 +31,10 @@ class PerformanceController extends Controller
                 $query->where('peformance_sheet.student_id',$request->student);
             }
 
+            if($request->has('class') && $request->class != ''){
+                $query->where('peformance_sheet.class',$request->class);
+            }
+
             if($request->has('week_number') && $request->week_number != ''){
                 $query->where('peformance_sheet.week',$request->week_number);
             }
@@ -89,6 +93,7 @@ class PerformanceController extends Controller
                     date('Y-m-d',strtotime($value->to)),
                     $value->class,
                     $value->week,
+                    $value->total,
                     $action,
                 ]);        
             }
@@ -144,54 +149,18 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
-
-        $social_behavior = [];
-        $personal_habits = [];
-
-        foreach (Behavior::DATA['social_behavior'] as $key => $value) {
-            $social_behavior[$key]['name'] = $value['name'];
-            $social_behavior[$key]['mon'] = 0;
-            $social_behavior[$key]['tue'] = 0;
-            $social_behavior[$key]['wed'] = 0;
-            $social_behavior[$key]['thu'] = 0;
-            $social_behavior[$key]['fri'] = 0;
-            $social_behavior[$key]['sat'] = 0;
-            $social_behavior[$key]['sun'] = 0;
-        }
-
-        foreach (Behavior::DATA['personal_habits'] as $key => $value) {
-            $personal_habits[$key]['name'] = $value['name'];
-            $personal_habits[$key]['mon'] = 1;
-            $personal_habits[$key]['tue'] = 2;
-            $personal_habits[$key]['wed'] = 3;
-            $personal_habits[$key]['thu'] = 4;
-            $personal_habits[$key]['fri'] = 5;
-            $personal_habits[$key]['sat'] = 5;
-            $personal_habits[$key]['sun'] = 6;
-        }
-
-        // dd($personal_habits);
-
-
-
-
-
-
         $p = Performance::create([
             'student_id' => $request->student,
             'from' => $request->from_date,
             'to' => $request->end_date,
             'class' => $request->class,
             'week' => $request->week_number,
-            'social_behavior' => json_encode($social_behavior),
-            'personal_habits' => json_encode($personal_habits),
+            'social_behavior' => json_encode([]),
+            'personal_habits' => json_encode([]),
         ]);
 
-        return redirect('admin/performances/'.Crypt::encryptString($p->id).'/edit');
-
-
-
-        // return back()->with('success','Record Created');
+        return redirect('performances/'.$p->id.'/edit');
+        
     }
 
 
@@ -222,8 +191,6 @@ class PerformanceController extends Controller
     public function update(Request $request, $id)
     {
 
-        // dd($request->all());
-
         $validator = Validator::make($request->all(), [
             "from_date" => 'required|max:255',
             "end_date" => 'required|max:255',
@@ -244,6 +211,9 @@ class PerformanceController extends Controller
             'week' => $request->week_number,
             'social_behavior' => json_encode($request->social_behavior),
             'personal_habits' => json_encode($request->personal_habits),
+            "act_kindness" => $request->act_kindness,
+            "notebook" => $request->notebook,
+            "total" => $request->total,
         ]);
 
         return back()->with('success','Record Updated');

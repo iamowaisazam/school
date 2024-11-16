@@ -21,19 +21,36 @@ class Behavior
         ['id'=>11,'name' => 'Nap / Qeloola (Y/N)'],
         ['id' =>12,'name' => 'Masnoon Duas'],
         ['id' =>13,'name' => 'Mention sleeping time'],
+      ],
+      'personal_habits2' => [
+        ['id'=>9,'name' => 'Taking meals properly'],
+        ['id'=>10,'name' => 'Avoiding screen / media'],
+        ['id'=>11,'name' => 'Nap / Qeloola (Y/N)'],
+        ['id' =>12,'name' => 'Masnoon Duas'],
+        ['id' =>13,'name' => 'Namaz'],
+        ['id' =>14,'name' => 'Miswak before prayer'],
+        ['id' =>15,'name' => 'Surah Mulk & Yaseen (Y/N)'],
+        ['id' =>16,'name' => 'Mention sleeping time'],
+        ['id' =>17,'name' => 'Selected act of kindness'],
       ]
-      ];
+  ];
 
 
     static public function  cc($i) {
-        return match ($i) {
-          'e' => 1,
-          'g' => 2,
-          'r' => 3,
-          'b' => 4,
-          'n' => 5,
-          default => 0,
-      };
+          if (strtolower($i) === 'e') {
+            return 5;
+        } elseif (strtolower($i) === 'g') {
+            return 4;
+        } elseif (strtolower($i) === 'r') {
+            return 3;
+        } elseif (strtolower($i) === 'b') {
+            return 2;
+        } elseif (strtolower($i) === 'n') {
+            return 1;
+        } else {
+            return 0;
+        }
+
     }  
 
 

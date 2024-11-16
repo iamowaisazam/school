@@ -24,6 +24,10 @@ return new class extends Migration
             $table->text('social_behavior')->nullable();
             $table->text('personal_habits')->nullable();
 
+            $table->text('act_kindness')->nullable();
+            $table->text('notebook')->nullable();
+            $table->integer('total')->nullable();
+
             $table->timestamps();
         });
     }

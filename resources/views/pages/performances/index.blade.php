@@ -51,6 +51,19 @@
                           
 
                             <div class="row">
+
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="class">Class</label>
+                                        <select class="select2bs4 form-control" name="class" data-placeholder="Select Class" style="width: 100%;">
+                                            <option value="">Select Class</option>
+                                            @foreach (App\Enums\Classes::DATA as $item)
+                                              <option value="{{$item['name']}}">{{$item['name']}}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-4">
                                     <label>Students</label>
                                     <div class="form-group">
@@ -114,6 +127,7 @@
                                         <th>To</th>
                                         <th>Class</th>
                                         <th>Week Number</th>
+                                        <th>Total</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -144,6 +158,7 @@
                     type: "GET",
                     data: function ( d ) {  
 
+                        d.class = $('select[name=class]').val();
                         d.student = $('select[name=student]').val();
                         d.week_number = $('input[name=week_number]').val();
                         d.start_date = $('input[name=start_date]').val();
@@ -207,6 +222,8 @@
             //         });
             //     }
             // });
+
+            
 
 
         });

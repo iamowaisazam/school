@@ -23,6 +23,9 @@ class Performance extends Model
         'week',
         'social_behavior',
         'personal_habits',
+        'act_kindness',
+        'notebook',
+        'total',
         'created_at',
         'updated_at',
     ];

@@ -3,6 +3,7 @@
    $social_behavior = isset($model) ? json_decode($model->social_behavior) : [];
    $personal_habits = isset($model) ? json_decode($model->personal_habits) : [];
 
+//    dd($personal_habits);
 
     $mon = 0;
     $tue = 0;
@@ -12,8 +13,6 @@
     $sat = 0;
     $sun = 0;
 
-
-    
 ?>
 
 <div class="row">
@@ -45,49 +44,50 @@
             @foreach (App\Enums\Behavior::DATA['social_behavior'] as $key => $item)
                 <tr>
                     <td>{{$item['name']}}
-                        <input type="hidden" name="social_behavior[{{$key}}][name]" value="" />
+                        <input type="hidden" name="social_behavior[{{$key}}][name]" 
+                        value="{{$item['name']}}" />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][mon]" 
+                        <input class="mon" name="social_behavior[{{$key}}][mon]" 
                        @if(isset($social_behavior[$key]))
                        @php $mon += App\Enums\Behavior::cc($social_behavior[$key]->mon); @endphp 
                         value="{{$social_behavior[$key]->mon}}" 
                        @endif />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][tue]" 
+                        <input class="tue" name="social_behavior[{{$key}}][tue]" 
                         
                         @if(isset($social_behavior[$key])) 
                         @php $tue += App\Enums\Behavior::cc($social_behavior[$key]->tue); @endphp 
                         value="{{$social_behavior[$key]->tue}}" @endif />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][wed]" 
+                        <input class="wed" name="social_behavior[{{$key}}][wed]" 
                         @if(isset($social_behavior[$key])) 
                         @php $wed += App\Enums\Behavior::cc($social_behavior[$key]->wed); @endphp 
                         value="{{$social_behavior[$key]->wed}}" @endif />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][thu]" 
+                        <input class="thu" name="social_behavior[{{$key}}][thu]" 
                         @if(isset($social_behavior[$key]))  
                         @php $thu += App\Enums\Behavior::cc($social_behavior[$key]->thu); @endphp 
                         value="{{$social_behavior[$key]->thu}}" @endif 
                         />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][fri]" 
+                        <input class="fri" name="social_behavior[{{$key}}][fri]" 
                         @if(isset($social_behavior[$key]))  
                         @php $fri += App\Enums\Behavior::cc($social_behavior[$key]->fri); @endphp 
                         value="{{$social_behavior[$key]->fri}}" @endif />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][sat]" 
+                        <input class="sat" name="social_behavior[{{$key}}][sat]" 
                         @if(isset($social_behavior[$key])) 
                         @php $sat += App\Enums\Behavior::cc($social_behavior[$key]->sat); @endphp 
                         value="{{$social_behavior[$key]->sat}}" @endif />
                     </td>
                     <td>
-                        <input name="social_behavior[{{$key}}][sun]" 
+                        <input class="sun" name="social_behavior[{{$key}}][sun]" 
                         @if(isset($social_behavior[$key])) 
                         @php $sun += App\Enums\Behavior::cc($social_behavior[$key]->sun); @endphp 
                         value="{{$social_behavior[$key]->sun}}" @endif />
@@ -105,69 +105,78 @@
                 <td></td>
                 <td></td>
             </tr>
-            @foreach (App\Enums\Behavior::DATA['personal_habits'] as $key => $item)
+            @foreach (App\Enums\Behavior::DATA['personal_habits2'] as $key => $item)
+            <?php 
+            // dd($personal_habits);
+            ?>
     
                 <tr>
                     <td>{{$item['name']}}
-                        <input type="hidden" name="personal_habits[{{$key}}][name]" value="" />
+                        <input type="hidden" name="personal_habits[{{$key}}][name]" value="{{$item['name']}}}" />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][mon]" 
-                       @if(isset($social_behavior[$key]))
-                       @php $mon += App\Enums\Behavior::cc($personal_habits[$key]->mon); @endphp 
-                        value="{{$personal_habits[$key]->mon}}" 
-                       @endif />
+                        <input class="mon" name="personal_habits[{{$key}}][mon]" 
+                        @if(isset($personal_habits[$key]))
+                            @php $mon += App\Enums\Behavior::cc($personal_habits[$key]->mon); @endphp 
+                            value="{{$personal_habits[$key]->mon}}" 
+                        @endif />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][tue]" 
+                        <input class="tue" name="personal_habits[{{$key}}][tue]" 
                         
                         @if(isset($personal_habits[$key])) 
                         @php $tue += App\Enums\Behavior::cc($personal_habits[$key]->tue); @endphp 
                         value="{{$personal_habits[$key]->tue}}" @endif />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][wed]" 
+                        <input class="wed" name="personal_habits[{{$key}}][wed]" 
                         @if(isset($personal_habits[$key])) 
                         @php $wed += App\Enums\Behavior::cc($personal_habits[$key]->wed); @endphp 
                         value="{{$personal_habits[$key]->wed}}" @endif />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][thu]" 
+                        <input class="thu" name="personal_habits[{{$key}}][thu]" 
                         @if(isset($personal_habits[$key]))  
                         @php $thu += App\Enums\Behavior::cc($personal_habits[$key]->thu); @endphp 
                         value="{{$personal_habits[$key]->thu}}" @endif 
                         />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][fri]" 
+                        <input class="fri" name="personal_habits[{{$key}}][fri]" 
                         @if(isset($personal_habits[$key]))  
                         @php $fri += App\Enums\Behavior::cc($personal_habits[$key]->fri); @endphp 
                         value="{{$personal_habits[$key]->fri}}" @endif />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][sat]" 
+                        <input class="sat" name="personal_habits[{{$key}}][sat]" 
                         @if(isset($personal_habits[$key])) 
-                        @php $sat += App\Enums\Behavior::cc($personal_habits[$key]->sat); @endphp 
-                        value="{{$personal_habits[$key]->sat}}" @endif />
+                         @php $sat += App\Enums\Behavior::cc($personal_habits[$key]->sat); @endphp 
+                         value="{{$personal_habits[$key]->sat}}" 
+                        @endif />
                     </td>
                     <td>
-                        <input name="personal_habits[{{$key}}][sun]" 
+                        <input class="sun" name="personal_habits[{{$key}}][sun]" 
                         @if(isset($personal_habits[$key])) 
-                        @php $sun += App\Enums\Behavior::cc($personal_habits[$key]->sun); @endphp 
-                        value="{{$personal_habits[$key]->sun}}" @endif />
+                         @php $sun += App\Enums\Behavior::cc($personal_habits[$key]->sun); @endphp 
+                         value="{{$personal_habits[$key]->sun}}" 
+                        @endif />
                     </td>
                 </tr>
             @endforeach
-
+            
+            <tr>
+                <th>Selected Act of Kindness (Topic of the week): </th>
+                <td colspan="7"><input class="w-100" @if($model) value="{{$model->act_kindness}}" @endif name="act_kindness" /></td>
+            </tr>
             <tr>
                 <th>Score:</th>
-                <td>{{$mon}}</td>
-                <td>{{$tue}}</td>
-                <td>{{$wed}}</td>
-                <td>{{$thu}}</td>
-                <td>{{$fri}}</td>
-                <td>{{$sat}}</td>
-                <td>{{$sun}}</td>
+                <td class="mons" >{{$mon}}</td>
+                <td class="tues" >{{$tue}}</td>
+                <td class="weds">{{$wed}}</td>
+                <td class="thus" >{{$thu}}</td>
+                <td class="fris" >{{$fri}}</td>
+                <td class="sats" >{{$sat}}</td>
+                <td class="suns" >{{$sun}}</td>
             </tr>
             <tr>
                 <th>Grading Key:</th>
@@ -184,10 +193,17 @@
             <tr>
                 <th>Total:</th>
                 <td colspan="7">
-                    {{ $mon + $tue + $wed  + $thu + $fri + $sat + $sun }}
+                    <span class="total_label" >{{ $mon + $tue + $wed  + $thu + $fri + $sat + $sun }}</span>
+                    <input type="hidden" name="total" value="{{ $mon + $tue + $wed  + $thu + $fri + $sat + $sun }}" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8" >
+                    <p class="text-center" >Tarbiyah Notebook</p>
+                    <textarea class="w-100" name="notebook"  cols="30" rows="10">@if($model){{$model->notebook}} @endif </textarea>
                 </td>
             </tr>
         </tbody>
     </table>
-</div>
+  </div>
 </div>

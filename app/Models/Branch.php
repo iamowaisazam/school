@@ -9,6 +9,12 @@ class Branch extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'email', 'contact_number', 'address'];
+    protected $fillable = [
+        'name', 
+        'email', 
+        'contact_number', 
+        'address'
+    ];
 
+    
 }

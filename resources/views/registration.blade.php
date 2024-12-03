@@ -16,6 +16,11 @@
 
 
     <style>
+        .register-page{
+            height: auto!important;
+            padding-top: 20px;
+        }
+
         .login-box,
         .register-box {
             width: 50% !important;
@@ -41,11 +46,26 @@
     <div class="register-box">
         <div class="card">
             <div class="card-body register-card-body">
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (session('message'))
+                    <div class="alert alert-success">
+                        {{ session('message') }}
+                    </div>
+                @endif
+
                 <h3 class="login-box-msg">Registration Form</h3>
                 <form method="POST" action="{{ URL::to('/submit-form')}}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
-
                         <div class="col-12 mb-3">
                             <div class="form-group">
                                 <label for="campus">Select Campus</label>
@@ -65,6 +85,7 @@
                                 <div id="already-registered-message" style="display:none;" class="alert alert-warning">This student is already registered.</div>
                             </div>
                         </div>
+
                     </div>
                 </form>
             </div>
@@ -189,7 +210,7 @@
                 console.log(campus)
 
                 // Fetch students based on selected class (AJAX or pre-loaded data)
-                $.ajax({url: '/get-students-by-class/' + classId + '/' +
+                $.ajax({url: "{{URL::to('/get-students-by-class')}}" +'/'+ classId + '/' +
                         campus, // Adjust the URL to match your route
                     method: 'GET',
                     success: function(data) {
@@ -244,50 +265,8 @@
         });
     </script>
 
-    <script>
-        $(document).ready(function() {
-            @if (session('message'))
-                toastr.success("{{ session('message') }}", "Success", {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000
-                });
-            @elseif (session('error'))
-                toastr.error("{{ session('error') }}", "Error", {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000
-                });
-            @elseif (session('warning'))
-                toastr.warning("{{ session('warning') }}", "Warning", {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000
-                });
-            @endif
-        });
-    </script>
+  
 
-    <script>
-        $(document).ready(function() {
-            // Display validation errors if any
-            @if ($errors->any())
-                var errorMessages = '';
-                @foreach ($errors->all() as $error)
-                    errorMessages += "{{ $error }}\n";
-                @endforeach
-                toastr.error(errorMessages, "Validation Error", {
-                    closeButton: true,
-                    progressBar: true,
-                    positionClass: "toast-top-right",
-                    timeOut: 5000
-                });
-            @endif
-        });
-    </script>
-    <script></script>
+  
 </body>
 </html>

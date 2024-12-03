@@ -26,8 +26,6 @@
 
     <section class="content-header">
         <div class="container-fluid">
-
-
             <div class="row">
                 <div class="col-md-12">
                     @if (session('success'))
@@ -37,116 +35,77 @@
                     @if (session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
+
                     @if ($errors->has('email'))
                         <div class="alert alert-danger">
                             {{ $errors->first('email') }}
                         </div>
                     @endif
-
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Search Sheet</h3>
-                        </div>
-                        <div class="card-body">
-                          
-
-                            <div class="row">
-
-                                <div class="col-sm-4">
-                                    <div class="form-group">
-                                        <label for="class">Class</label>
-                                        <select class="select2bs4 form-control" name="class" data-placeholder="Select Class" style="width: 100%;">
-                                            <option value="">Select Class</option>
-                                            @foreach (App\Enums\Classes::DATA as $item)
-                                              <option value="{{$item['name']}}">{{$item['name']}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Students</label>
-                                    <div class="form-group">
-                                        <select name="student" class="form-control">
-                                            <option value="">Select Student</option>
-                                            @foreach ($students as $item)
-                                            <option value="{{$item->id}}">{{$item->first_name}} {{$item->last_name}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Session</label>
-                                    <div class="form-group">
-                                        <select name="session" class="form-control">
-                                            <option value="">Select Session</option>
-                                            @foreach ($sessions as $session)
-                                            <option value="{{$session->id}}">{{$session->title}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Week</label>
-                                    <div class="form-group">
-                                        <select name="week" class="form-control">
-                                            <option value="">Select Week</option>
-                                            @foreach ($weeks as $week)
-                                            <option value="{{$week->id}}">{{$week->week}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Start Date</label>
-                                    <div class="form-group">
-                                        <input type="date" name="start_date" class="form-control"  />
-                                    </div>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>End Date</label>
-                                    <div class="form-group">
-                                        <input type="date" name="end_date" class="form-control"  />
-                                    </div>
-                                </div>
-
-                                <div class="col-12 mt-3 text-center">
-                                    <button class="search_btn btn btn-primary" >Search</button>
-                                </div>
-                            </div>
-                          
-                        </div>
-                    </div>
                 </div>
             </div>
 
 
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Search Week</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label>Sessions</label>
+                            <div class="form-group">
+                                <select name="session" class="form-control">
+                                    <option value="">Select Session</option>
+                                    @foreach ($sessions as $s)
+                                    <option value="{{$s->id}}">{{$s->title}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Week Number</label>
+                            <div class="form-group">
+                                <input name="week" class="form-control"  />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>Start Date</label>
+                            <div class="form-group">
+                                <input type="date" name="from" class="form-control"  />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label>End Date</label>
+                            <div class="form-group">
+                                <input type="date" name="to" class="form-control"  />
+                            </div>
+                        </div>
+
+                        <div class="col-12 mt-3 text-center">
+                            <button class="search_btn btn btn-primary" >Search</button>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
-                        <div class="card-header">
-                            <h3 style="float: none!important" class="card-title d-flex justify-content-between"> Performance
-                                <a class="btn btn-primary" href="{{URL::to('performances/create')}}">Create</a>
+                        <div class="card-header ">
+                            <h3 style="float: none!important" class="card-title d-flex justify-content-between"> Weeks
+                                <a class="btn btn-primary" href="{{URL::to('weeks/create')}}">Create</a>
                             </h3>
                         </div>
-
                         <div class="card-body">
                             <table class="table table-bordered" id="table">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
-                                        <th>SID</th>
-                                        <th>Student Name</th>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Class</th>
                                         <th>Session</th>
-                                        <th>Week Number</th>
-                                        <th>Total</th>
+                                        <th>Week</th>
+                                        <th>Start</th>
+                                        <th>End</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -155,7 +114,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </section>
 @endsection
@@ -163,8 +121,6 @@
 @section('script')
     <script type="text/javascript">
         $(document).ready(function() {
-
-            let weeks = @json($weeks);
 
 
             // DataTable initialization
@@ -175,17 +131,14 @@
                 dom: 'lirtp',
                 lengthMenu: [[10,25, 50, 100,500],[10,25, 50, 100,500]],
                 ajax: {
-                    url: "{{URL::to('performances')}}",
+                    url: "{{URL::to('/weeks')}}",
                     type: "GET",
                     data: function ( d ) {  
 
-                        d.class = $('select[name=class]').val();
-                        d.student = $('select[name=student]').val();
-                        d.week = $('select[name=week]').val();
                         d.session = $('select[name=session]').val();
-
-                        d.start_date = $('input[name=start_date]').val();
-                        d.end_date = $('input[name=end_date]').val();
+                        d.week = $('input[name=week]').val();
+                        d.from = $('input[name=from]').val();
+                        d.to = $('input[name=to]').val();
 
                     }
                 },
@@ -216,16 +169,6 @@
             });
 
         });
-
-        $('select[name=session]').change(function (e) {
-            $('select[name=week]').html('');
-            $('select[name=week]').append(`<option value="">Select Week</option>`);
-            weeks.forEach(element => {
-                if(element.schoolsession_id == $('select[name=session]').val()){
-                    $('select[name=week]').append(`<option value="${element.id}">${element.week}</option>`);
-                }
-            });
-        }).change();
 
             
             // $('#table').on('click', '.delete', function(event) {

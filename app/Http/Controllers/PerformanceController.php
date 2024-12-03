@@ -8,7 +8,10 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Student;
 use App\Imports\StudentsImport;
 use App\Models\Performance;
+use App\Models\SchoolSession;
+use App\Models\Week;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -23,9 +26,10 @@ class PerformanceController extends Controller
 
         if ($request->ajax()) {
 
-            $query = Performance::join('students','students.id','=','peformance_sheet.student_id');
+            $query = Performance::join('students','students.id','=','peformance_sheet.student_id')
+            ->join('week','week.id','=','peformance_sheet.week')
+            ->join('schoolsessions','schoolsessions.id','=','week.schoolsession_id');
 
-     
 
             if($request->has('student') && $request->student != ''){
                 $query->where('peformance_sheet.student_id',$request->student);
@@ -35,36 +39,33 @@ class PerformanceController extends Controller
                 $query->where('peformance_sheet.class',$request->class);
             }
 
-            if($request->has('week_number') && $request->week_number != ''){
-                $query->where('peformance_sheet.week',$request->week_number);
+            if($request->has('week') && $request->week != ''){
+                $query->where('week.id',$request->week);
+            }
+
+            if($request->has('session') && $request->session != ''){
+                $query->where('schoolsessions.id',$request->session);
             }
 
             if($request->has('start_date') && $request->start_date != ''){
-                $query->where('peformance_sheet.from',$request->start_date);
+                $query->where('week.from',$request->start_date);
             }
 
             if($request->has('end_date') && $request->end_date != ''){
-                $query->where('peformance_sheet.to',$request->end_date);
+                $query->where('week.to',$request->end_date);
             }
 
-
-
-            // $search = $request->get('search');
-            // if($search != ""){
-            //    $query = $query->where(function ($s) use($search) {
-                //    $s->where('week','like','%'.$search.'%');
-                //    ->orwhere('customer_email','like','%'.$search.'%')
-                //    ->orwhere('company_name','like','%'.$search.'%')
-                //    ->orwhere('customer_phone','like','%'.$search.'%');
-            //    });
-            // }
             
             $count = $query->count();       
             $data = $query->skip($request->start)
             ->take($request->length)
-            ->orderBy('id','desc')
+            ->orderBy('peformance_sheet.id','desc')
             ->select([
                 'peformance_sheet.*',
+                'week.from',
+                'week.to',
+                'schoolsessions.title',
+                'week.week',
                 'students.sid',
                 'students.first_name',
                 'students.last_name',
@@ -92,6 +93,7 @@ class PerformanceController extends Controller
                     date('Y-m-d',strtotime($value->from)),
                     date('Y-m-d',strtotime($value->to)),
                     $value->class,
+                    $value->title,
                     $value->week,
                     $value->total,
                     $action,
@@ -108,6 +110,8 @@ class PerformanceController extends Controller
 
         $data = [
             'students' => Student::all(),
+            'sessions' => SchoolSession::all(),
+            'weeks' => Week::all(),
         ];
 
         return view('pages.performances.index',$data);
@@ -122,8 +126,17 @@ class PerformanceController extends Controller
      */
     public function create()
     {
+
+        
+        $results = Performance::select(DB::raw("CONCAT(student_id, '-', week) as student_week"))
+        ->pluck('student_week')
+        ->toArray();
+
         $data = [
             'students' => Student::all(),
+            'sessions' => SchoolSession::all(),
+            'weeks' => Week::all(),
+            'results' => $results,
         ];
         return view('pages.performances.create',$data);
     }
@@ -134,13 +147,11 @@ class PerformanceController extends Controller
      */
     public function store(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             "student" => 'required|max:255',
-            "from_date" => 'required|max:255',
-            "end_date" => 'required|max:255',
             "class" => 'required|max:255',
-            "week_number" => 'required|max:255',
+            "week" => 'required|max:255',
+            "session" => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -149,12 +160,25 @@ class PerformanceController extends Controller
                 ->withInput();
         }
 
+
+        $old = Performance::where('student_id',$request->student)
+        ->where('week',$request->week)
+        ->where('class',$request->class)
+        ->get();
+
+        if(count($old) > 0){
+            return back()
+            ->withErrors($validator)
+            ->withInput()
+            ->with('error','Performance Already Added');
+        }
+
+
+
         $p = Performance::create([
-            'student_id' => $request->student,
-            'from' => $request->from_date,
-            'to' => $request->end_date,
             'class' => $request->class,
-            'week' => $request->week_number,
+            'week' => $request->week,
+            'student_id' => $request->student,
             'social_behavior' => json_encode([]),
             'personal_habits' => json_encode([]),
         ]);
@@ -192,9 +216,6 @@ class PerformanceController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            "from_date" => 'required|max:255',
-            "end_date" => 'required|max:255',
-            "week_number" => 'required|max:255',
             "social_behavior" => 'required',
             "personal_habits" => 'required',
         ]);
@@ -206,9 +227,6 @@ class PerformanceController extends Controller
         }
 
         $student = Performance::where('id',$id)->update([
-            'from' => $request->from_date,
-            'to' => $request->end_date,
-            'week' => $request->week_number,
             'social_behavior' => json_encode($request->social_behavior),
             'personal_habits' => json_encode($request->personal_habits),
             "act_kindness" => $request->act_kindness,

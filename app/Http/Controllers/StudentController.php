@@ -68,8 +68,12 @@ class StudentController extends Controller
     public function store(Request $request)
     {
 
+        // dd($request->all());
+
+
+
         $validator = Validator::make($request->all(), [
-            'sid' => 'required|string|max:255',
+            'sid' => 'required|string|max:255|unique:students',
             'campus' => 'required|string|max:100',
             'class' => 'required|string|max:100',
             'father_name' => 'nullable|string|max:255',
@@ -89,15 +93,20 @@ class StudentController extends Controller
                 ->withInput();
         }
 
+        $validatedData = $request->all();
+
+        // dd($validatedData);
+
         if ($request->hasFile('image')) {
             $imagePath = $request->file('image')->store('images', 'public_disk');
             $validatedData['image'] = '/storage/' . $imagePath;
         }
 
         $validatedData['is_registered'] = $request->input('is_registered') == '1' ? 0 : 1;
-        $student = Student::create($validatedData);
 
-        return back()->with('success','Record Created');
+        Student::create($validatedData);
+
+        return redirect('/students')->with('success','Record Created');
     }
 
 
@@ -123,7 +132,7 @@ class StudentController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            'sid' => 'required|string|max:255',
+            'sid' => 'required|string|max:255|unique:students,sid,' . $request->sid,
             'campus' => 'required|string|max:100',
             'class' => 'required|string|max:100',
             'father_name' => 'nullable|string|max:255',

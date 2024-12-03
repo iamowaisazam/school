@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
+        
         Schema::create('peformance_sheet', function (Blueprint $table) {
             $table->id();
             $table->integer('student_id')->nullable();
-            $table->timestamp('from')->nullable();
-            $table->timestamp('to')->nullable();
             $table->string('class')->nullable();
             $table->string('week')->nullable();
             
@@ -30,6 +29,7 @@ return new class extends Migration
 
             $table->timestamps();
         });
+
     }
 
     /**

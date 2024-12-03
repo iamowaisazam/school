@@ -9,6 +9,8 @@ use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\BranchController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PerformanceController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\WeekController;
 use Illuminate\Support\Facades\Artisan;
 
 /*
@@ -42,8 +44,10 @@ Route::get('/registration', function () {
     $students = Student::where('is_registered',0)->get();
     return view('registration',compact('students'));
 })->name('registration');
-Route::post('/submit-form', [StudentController::class, 'userRegistration'])->name('user.registration');
-Route::get('/get-students-by-class/{class_id}/{campus}',[StudentController::class, 'getStudentsByClass']);
+
+Route::get('/get-students-by-class/{class_id}/{campus}',[RegistrationController::class, 'getStudentsByClass']);
+Route::post('/submit-form', [RegistrationController::class, 'userRegistration'])->name('user.registration');
+
 Route::get('students/download-pdf', [StudentController::class, 'downloadPdf'])->name('students.download-pdf');
 
 
@@ -89,6 +93,9 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('students/delete-registration/{id}',[RegistrationController::class, 'deleteRegistration']);
 
         Route::resource('performances', PerformanceController::class);
+
+        Route::resource('sessions', SessionController::class);
+        Route::resource('weeks', WeekController::class);
 
 
 

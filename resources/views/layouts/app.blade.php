@@ -96,13 +96,7 @@
                             </a>
                         </li>
 
-                        <li class="nav-item">
-                            <a href="{{ URL::to('/students/create')}}" 
-                            class="nav-link {{ request()->is('students/create') ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Student Create</p>
-                            </a>
-                        </li>
+                        
 
                         <li class="nav-item ">
                             <a href="{{ URL::to('/students') }}" 
@@ -128,10 +122,18 @@
                         </li>
 
                         <li class="nav-item">
-                            <a href="{{URL::to('performances/create')}}" class="nav-link 
-                            {{ request()->is('performances/create') ? 'active' : '' }}">
+                            <a href="{{ URL::to('/sessions')}}" 
+                            class="nav-link {{ request()->is('sessions*') ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Create Performance</p>
+                                <p>Sessions</p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{ URL::to('/weeks')}}" 
+                            class="nav-link {{ request()->is('weeks*') ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <p>Weeks</p>
                             </a>
                         </li>
 

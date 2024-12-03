@@ -37,7 +37,7 @@
                                             <label for="class">Select Class</label>
                                             <select class="select2bs4 form-control" name="class" data-placeholder="Select Class" style="width: 100%;">
                                                 @foreach (App\Enums\Classes::DATA as $item)
-                                                  <option value="{{$item['name']}}">{{$item['name']}}</option>
+                                                  <option @if(old('class') == $item['name']) selected @endif  value="{{$item['name']}}">{{$item['name']}}</option>
                                                 @endforeach
                                             </select>
                                             @if($errors->has('class'))
@@ -51,9 +51,6 @@
                                             <label>Student</label>
                                             <select class="form-control" name="student">
                                              <option value="">Select Student</option>
-                                              @foreach ($students as $item)
-                                               <option value="{{$item->id}}">{{$item->first_name}}</option>
-                                              @endforeach
                                             </select>
                                             @if($errors->has('student'))
                                               <p class="text-danger" >{{ $errors->first('student') }}</p>
@@ -61,43 +58,34 @@
                                         </div>
                                     </div>
 
-                                    
-
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>From Date</label>
-                                            <input value="{{old('from_date')}}"  type="date" name="from_date" class="form-control">
-                                            @if($errors->has('from_date'))
-                                            <p class="text-danger" >{{ $errors->first('from_date') }}</p>
+                                            <label>Session</label>
+                                            <select class="form-control" name="session">
+                                             <option value="">Select Session</option>
+                                              @foreach ($sessions as $s)
+                                               <option @if(old('session') == $s->id) selected @endif value="{{$s->id}}">
+                                                {{$s->title}}</option>
+                                              @endforeach
+                                            </select>
+                                            @if($errors->has('session'))
+                                              <p class="text-danger" >{{ $errors->first('session') }}</p>
                                             @endif
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label>End Date</label>
-                                            <input type="date" value="{{old('end_date')}}" name="end_date" class="form-control">
-                                                @if($errors->has('end_date'))
-                                                <p class="text-danger">{{$errors->first('end_date')}}</p>
-                                                @endif
-                                        </div>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <label>Week #</label>
-                                            <input name="week_number" value="{{old('week_number')}}" class="form-control">
-                                                @if($errors->has('week_number'))
-                                                <p class="text-danger">{{$errors->first('week_number')}}</p>
-                                                @endif
+                                            <label>Week</label>
+                                            <select class="form-control" name="week">
+                                             <option value="">Select Week</option>
+                                            </select>
+                                            @if($errors->has('week'))
+                                              <p class="text-danger" >{{ $errors->first('week') }}</p>
+                                            @endif
                                         </div>
                                     </div>
                                 </div>
-
-                                {{-- @include('pages.performances.sheet1') --}}
-
-                          
-                           
 
                                 <div class="row">
                                     <div class="col-12 text-center">
@@ -118,17 +106,38 @@
     
 
 <script>
+
         let students = @json($students);
+        let weeks = @json($weeks);
+        let results = @json($results);
+
+        
+
+        let sstudent = @json(old('student'));
+        let sweek = @json(old('week'));
 
         $('select[name=class]').change(function (e) {
-
             $('select[name=student]').html('');
             students.forEach(element => {
                 if(element.class == $('select[name=class]').val()){
-                    $('select[name=student]').append(`<option value="${element.id}">${element.first_name} ${element.last_name}</option>`);
+                    $('select[name=student]').append(`<option ${Number(sstudent) == element.id ? 'selected' : ''} value="${element.id}">${element.first_name} ${element.last_name}</option>`);
                 }
             });
-           
+        }).change();
+
+
+        $('select[name=session]').change(function (e) {
+            $('select[name=week]').html('');
+            weeks.forEach(element => {
+
+                if(!results.includes($('select[name=student]').val()+'-'+element.id)) {
+                    if(element.schoolsession_id == $('select[name=session]').val()){
+                    $('select[name=week]').append(`<option ${Number(sweek) == element.id ? 'selected' : ''} value="${element.id}">${element.week}</option>`);
+                    }
+                }
+
+                
+            });
         }).change();
 
 </script>

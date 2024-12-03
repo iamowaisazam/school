@@ -188,6 +188,12 @@
                     <input name="total" type="hidden" value="{{ $mon + $tue + $wed  + $thu + $fri + $sat + $sun }}" />
                 </td>
             </tr>
+            <tr>
+                <td colspan="8" >
+                    <p class="text-center" >Tarbiyah Notebook</p>
+                    <textarea class="w-100" name="notebook"  cols="30" rows="10">@if($model){{$model->notebook}} @endif </textarea>
+                </td>
+            </tr>
         </tbody>
     </table>
 </div>

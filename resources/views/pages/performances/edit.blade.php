@@ -50,40 +50,38 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>From Date</label>
-                                            <input value="{{date('Y-m-d',strtotime($model->from))}}"  type="date" name="from_date" class="form-control">
-                                            @if($errors->has('from_date'))
-                                            <p class="text-danger" >{{ $errors->first('from_date') }}</p>
-                                            @endif
+                                            <input readonly value="{{date('Y-m-d',strtotime($model->weekModel->from))}}" name="from_date" class="form-control">
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>End Date</label>
-                                            <input type="date" value="{{date('Y-m-d',strtotime($model->to))}}" name="end_date" class="form-control">
-                                                @if($errors->has('end_date'))
-                                                <p class="text-danger">{{$errors->first('end_date')}}</p>
-                                                @endif
+                                            <input readonly value="{{date('Y-m-d',strtotime($model->weekModel->to))}}"  class="form-control" />
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Session</label>
+                                            <input readonly value="{{$model->weekModel->sessionModel->title}}" class="form-control" />
                                         </div>
                                     </div>
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <label>Week #</label>
-                                            <input name="week_number" value="{{$model->week}}" class="form-control">
-                                                @if($errors->has('week_number'))
-                                                <p class="text-danger">{{$errors->first('week_number')}}</p>
-                                                @endif
+                                            <input readonly value="{{$model->weekModel->week}}" class="form-control" />
                                         </div>
                                     </div>
                                 </div>
-                                @if(in_array($model->class,['Senior','Hifz Boys','Hifz Girls']))
-                                   @include('pages.performances.sheet2')
-                                @else
+
+                                @if(in_array($model->class,['Beginner','Junior','Senior']))
                                    @include('pages.performances.sheet1')
+                                @else
+                                    @include('pages.performances.sheet2')
                                 @endif
                            
-
                                 <div class="row pt-3">
                                     <div class="col-12 text-center">
                                         <button type="submit" class="btn btn-secondary">Update</button>
@@ -180,6 +178,14 @@
         });
 
         calculate();
+
+        $('.mon,.tue,.wed,.thu,.fris,.sats,.suns').on('input', function () {
+            const validValues = ['E', 'G', 'R', 'B', 'N'];
+            const inputValue = $(this).val(); 
+            if (!validValues.includes(inputValue)) {
+                $(this).val('');
+            }
+        });
 
     });
 </script>

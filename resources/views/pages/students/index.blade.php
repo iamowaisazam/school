@@ -60,7 +60,9 @@
 
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title">Students</h3>
+                            <h3 style="float: none!important" class="card-title d-flex justify-content-between"> Students
+                                <a class="btn btn-primary" href="{{URL::to('students/create')}}">Create</a>
+                            </h3>
                         </div>
 
                         <div class="card-body">
@@ -71,6 +73,7 @@
                                         <th>sid</th>
                                         <th>first name</th>
                                         <th>last name</th>
+                                        <th>Registration</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -155,6 +158,13 @@
                     {
                         data: 'last_name',
                         name: 'last_name'
+                    },
+                    {
+                        data: 'is_registered',
+                        name: 'is_registered',
+                        render: function(data, type, row) {
+                            return data ? 'Yes' : 'No';
+                        }
                     },
                     {
                         data: 'action',

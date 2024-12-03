@@ -71,44 +71,32 @@ class RegistrationController extends Controller
 
     public function userRegistration(Request $request)
     {
-        try {
-            if ($request->has('student_id')) {
-                // Admin updating an existing student
-                $student = Student::findOrFail($request->student_id);
 
-                $validatedData = $request->validate([
-                    'student_name' => 'required|string|max:255',
-                    'father_name' => 'required|string|max:255',
-                    'phone' => 'required|string|min:8',
-                    'dob' => 'required|string|min:8',
-                    'address' => 'required|string|min:8',
-                    'image' => 'required|image|mimes:jpg,jpeg,png|max:2048', // Validation for image
+        $student = Student::findOrFail($request->student_id);
+        $validatedData = $request->validate([
+            'student_name' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
+            'phone' => 'required|string|min:8',
+            'dob' => 'required|string|min:8',
+            'address' => 'required|string|min:8',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-                ]);
-
-                if ($request->hasFile('image')) {
-                    $imagePath = $request->file('image')->store('images', 'public');
-                    $validatedData['image'] = asset('/storage/' . $imagePath);
-                }
-
-                
-                $validatedData['is_registered'] = 1;
-                $student->update($validatedData);
-
-                return redirect()->route('registration')->with('message', 'Student registered successfully');
-            }
-        } catch (ValidationException $e) {
-            return redirect()->back()->with('error', 'Validation failed')->withErrors($e->errors());
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Operation failed');
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+            $validatedData['image'] = asset('/storage/' . $imagePath);
         }
+
+        $validatedData['is_registered'] = 1;
+        $student->update($validatedData);
+        
+        return redirect()->route('registration')->with('message', 'Student registered successfully');
+
     }
-
-
-  
 
     public function getStudentsByClass($classId,$campus)
     {
+    
         $students = Student::where('class', $classId)->where('campus', $campus)->get();
         return response()->json(['students' => $students]);
     }
@@ -136,8 +124,6 @@ class RegistrationController extends Controller
 
         return view('pages.registrations.print-view', compact('students', 'type'));
     }
-
-
 
     public function classList(Request $request)
     {
